@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Remove="LanguagePack.en-US.resx" />
+    <EmbeddedResource Remove="LanguagePack.ko-KR.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Resources\LanguagePack.en-US.resx" />
+    <None Include="Resources\LanguagePack.ko-KR.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

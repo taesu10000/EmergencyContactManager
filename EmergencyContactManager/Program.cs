@@ -3,12 +3,13 @@ using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using EmergencyContactManager.Components;
 using EmergencyContactManager.Factories;
-using EmergencyContactManager.MiddleWares;
+using EmergencyContactManager.Middlewares;
 using Infrastructure;
 using Infrastructure.Parsers;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,15 @@ builder.Services.AddHttpClient();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddLocalization();
 var app = builder.Build();
+
+var supportedCultures = new[] { "ko-KR", "en-US" };
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture("ko-KR")
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures));
+
 
 app.UseMiddleware<ApiExceptionMiddleware>();
 

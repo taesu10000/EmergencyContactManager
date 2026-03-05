@@ -1,4 +1,5 @@
-﻿using Application.Interfaces.Services;
+﻿using Application.Exceptions;
+using Application.Interfaces.Services;
 using Infrastructure.Parsers;
 
 namespace Application.Resolver
@@ -10,6 +11,6 @@ namespace Application.Resolver
 
         public IParsingService Resolve(string content)
             => parsers.FirstOrDefault(p => p.CanParse(content))
-               ?? throw new InvalidOperationException("CSV/JSON 포맷을 판별할 수 없습니다.");
+               ?? throw new UnsupportedFormatException();
     }
 }

@@ -3,4 +3,12 @@
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Update="Resources\LanguagePack.en-US.resx">
+      <SubType>Designer</SubType>
+    </None>
+    <None Update="Resources\LanguagePack.ko-KR.resx">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
 </Project>
