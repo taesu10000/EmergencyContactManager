@@ -3,6 +3,7 @@ using Application.Interfaces.Repositories;
 using Application.Interfaces.Services;
 using EmergencyContactManager.Components;
 using EmergencyContactManager.Factories;
+using EmergencyContactManager.MiddleWares;
 using Infrastructure;
 using Infrastructure.Parsers;
 using Infrastructure.Repositories;
@@ -36,6 +37,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ApiExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,6 +1,6 @@
 ﻿namespace Application.Exceptions
 {
-    public class NullEntityException : AppException
+    public class AppException : Exception
     {
     }
 }

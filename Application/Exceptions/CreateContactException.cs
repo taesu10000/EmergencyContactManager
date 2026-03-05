@@ -1,6 +1,6 @@
 ﻿namespace Application.Exceptions
 {
-    public class CreateContactException : Exception
+    public class CreateContactException : AppException
     {
     }
 }

@@ -35,7 +35,7 @@ public class ContactController : ControllerBase
         var cmd = await createContactCommandFactory.ReadContentAsync(contactCreateRequest, ct);
         var result = await createContactHandler.ExecuteAsync(cmd, ct);
 
-        return Ok(new CreateContactResponse(result.affectedCount));
+        return StatusCode(StatusCodes.Status201Created, new CreateContactResponse(result.affectedCount));
     }
     [HttpDelete("all")]
     public async Task<IActionResult> DeleteAsync(CancellationToken ct)

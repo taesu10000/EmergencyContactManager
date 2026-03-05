@@ -1,6 +1,6 @@
 ﻿namespace Application.Exceptions
 {
-    public class DeserializationException : Exception
+    public class DeserializationException : AppException
     {
     }
 }
