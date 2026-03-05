@@ -1,6 +1,4 @@
-﻿using Application.Handlers.CreateContact;
-
-namespace Application.Interfaces.Handlers
+﻿namespace Application.Handlers.CreateContact
 {
     public interface ICreateContactHandler
     {

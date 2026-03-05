@@ -1,4 +1,3 @@
 ﻿namespace Application.Handlers.CreateContact;
 
-public sealed record CreateContactCommand(Stream? FileStream,
-                                          string? Raw);
+public sealed record CreateContactCommand(string? FileRaws);

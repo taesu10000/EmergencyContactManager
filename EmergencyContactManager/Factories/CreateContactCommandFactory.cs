@@ -5,18 +5,20 @@ namespace EmergencyContactManager.Factories
 {
     public sealed class CreateContactCommandFactory : ICreateContactCommandFactory
     {
-        public async Task<CreateContactCommand> CreateCmdAsync(ContactCreateRequest req, CancellationToken ct)
+        public async Task<CreateContactCommand> ReadContentAsync(ContactCreateRequest req, CancellationToken ct)
         {
+            var content = string.Empty;
             if (req.File is not null && req.File.Length > 0)
             {
                 // HTTP lifetime 문제 피하려면 복사해서 넘기는 걸 권장
-                var ms = new MemoryStream();
-                await req.File.CopyToAsync(ms, ct);
-                ms.Position = 0;
-                return new CreateContactCommand(ms, req.Raw);
+                using var reader = new StreamReader(req.File.OpenReadStream(), leaveOpen: false);
+                content = await reader.ReadToEndAsync(ct);
             }
-
-            return new CreateContactCommand(null, req.Raw);
+            else if (!string.IsNullOrEmpty(req.Raw))
+            {
+                content = req.Raw;
+            }
+            return new CreateContactCommand(content);
         }
     }
 

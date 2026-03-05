@@ -1,5 +1,7 @@
-﻿using Application.Handlers.SearchContact;
-using Application.Interfaces.Handlers;
+﻿using Application.Handlers.CreateContact;
+using Application.Handlers.DeleteAllContact;
+using Application.Handlers.GetContact;
+using Application.Handlers.SearchContact;
 using EmergencyContactManager.Factories;
 using EmergencyContactManager.Models.Request;
 using EmergencyContactManager.Models.Response;
@@ -12,32 +14,42 @@ public class ContactController : ControllerBase
     private readonly ICreateContactHandler createContactHandler;
     private readonly IGetContactHandler getContactHandler;
     private readonly ISearchContactHandler searchContactHandler;
+    private readonly IDeleteAllContactHandler deleteAllContactHandler;
     private readonly ICreateContactCommandFactory createContactCommandFactory;
 
     public ContactController(ICreateContactHandler createContactHandler,
                              IGetContactHandler getContactHandler,
                              ISearchContactHandler searchContactHandler,
+                             IDeleteAllContactHandler deleteAllContactHandler,
                              ICreateContactCommandFactory createContactCommandFactory)
     {
         this.createContactHandler = createContactHandler;
         this.getContactHandler = getContactHandler;
         this.searchContactHandler = searchContactHandler;
+        this.deleteAllContactHandler = deleteAllContactHandler;
         this.createContactCommandFactory = createContactCommandFactory;
     }
     [HttpPost]
-    public async Task<IActionResult> CreateAsync(ContactCreateRequest contactCreateRequest, CancellationToken ct)
+    public async Task<IActionResult> CreateAsync([FromForm] ContactCreateRequest contactCreateRequest, CancellationToken ct)
     {
-        var cmd = await createContactCommandFactory.CreateCmdAsync(contactCreateRequest, ct);
+        var cmd = await createContactCommandFactory.ReadContentAsync(contactCreateRequest, ct);
         var result = await createContactHandler.ExecuteAsync(cmd, ct);
 
-        return Ok(new ContactCreateResponse(result.affectedCount));
+        return Ok(new CreateContactResponse(result.affectedCount));
     }
-    [HttpGet("{name:string}")]
+    [HttpDelete("all")]
+    public async Task<IActionResult> DeleteAsync(CancellationToken ct)
+    {
+        var result = await deleteAllContactHandler.ExecuteAsync(ct);
+        return Ok(new DeleteAllResponse(result.affectedCount));
+    }
+
+    [HttpGet("{name}")]
     public async Task<IActionResult> GetAsync(string name, CancellationToken ct)
     {
         var result = await getContactHandler.ExecuteAsync(name);
 
-        return Ok(new ContactGetResponse(Name: result.Name, Email: result.Email, Tel: result.Tel));
+        return Ok(result.Select(r => new GetContactResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList());
     }
     [HttpGet]
     public async Task<IActionResult> GetAsync([FromQuery] int page, int pageSize, CancellationToken ct)
@@ -45,7 +57,6 @@ public class ContactController : ControllerBase
         var query = new SearchContractQuery(page, pageSize);
         var result = await searchContactHandler.ExecuteAsync(query);
 
-        var response = result.Select(r => new ContactGetResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList();
-        return Ok(response);
+        return Ok(result.Select(r => new GetContactResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList());
     }
 }

@@ -5,7 +5,7 @@ namespace EmergencyContactManager.Factories
 {
     public interface ICreateContactCommandFactory
     {
-        Task<CreateContactCommand> CreateCmdAsync(ContactCreateRequest req, CancellationToken ct = default);
+        Task<CreateContactCommand> ReadContentAsync(ContactCreateRequest req, CancellationToken ct = default);
     }
 
 }

@@ -7,11 +7,7 @@ namespace Infrastructure.Parsers;
 
 public class JasonParser : IParsingService
 {
-    private readonly IFileStoreService fileStoreService;
-    public JasonParser(IFileStoreService fileStoreService)
-    {
-        this.fileStoreService = fileStoreService;
-    }
+    public FileType Format { get; } = FileType.JSON;
     public bool CanParse(string content)
     {
 		try
@@ -23,5 +19,12 @@ public class JasonParser : IParsingService
 		{
             return false;
 		}
+    }
+
+    public List<T> Deserialize<T>(string content) where T : class
+    {
+        var document = JsonDocument.Parse(content);
+        var result = document.Deserialize<List<T>>() ?? new List<T>();
+        return result;
     }
 }

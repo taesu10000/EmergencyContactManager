@@ -1,35 +1,33 @@
-﻿using Application.Interfaces.Handlers;
+﻿using Application.Exceptions;
+using Application.Interfaces.Repositories;
 using Application.Resolver;
+using Domain;
+using Infrastructure.Services;
 
 namespace Application.Handlers.CreateContact
 {
     public class CreateContactHandler : ICreateContactHandler
     {
         private readonly IContactParserResolver contactParserResolver;
-        public CreateContactHandler(IContactParserResolver contactParserResolver)
+        private readonly IContactRepository contactRepository;
+        private readonly IApplicationTransaction applicationTransaction;
+        public CreateContactHandler(IContactParserResolver contactParserResolver, IContactRepository contactRepository, IApplicationTransaction applicationTransaction)
         {
             this.contactParserResolver = contactParserResolver;
+            this.contactRepository = contactRepository;
+            this.applicationTransaction = applicationTransaction;
         }
         public async Task<CreateContactResult> ExecuteAsync(CreateContactCommand cmd, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
-        }
-        private static async Task<string> GetContent(CreateContactCommand cmd, CancellationToken ct)
-        {
-            string content;
-            //File인지 Raw인지 판단하여 content에 저장
-            if (cmd.FileStream is not null)
-            {
-                using var reader = new StreamReader(cmd.FileStream, leaveOpen: false);
-                content = await reader.ReadToEndAsync(ct);
-            }
-            else if (!string.IsNullOrWhiteSpace(cmd.Raw))
-            {
-                content = cmd.Raw;
-            }
-            else
-                throw new InvalidOperationException("At least either of File or Raw required.");
-            return content;
+            if (string.IsNullOrEmpty(cmd.FileRaws))
+                throw new CreateContactException();
+
+            var parser = contactParserResolver.Resolve(cmd.FileRaws);
+            var objs = parser.Deserialize<Contact>(cmd.FileRaws);
+
+            await contactRepository.CreateAsync(objs, ct);
+            var affected = await applicationTransaction.SaveChangesAsync();
+            return new CreateContactResult(affectedCount: affected );
         }
     }
 }
