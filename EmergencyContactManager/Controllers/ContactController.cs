@@ -53,10 +53,18 @@ public class ContactController : ControllerBase
         return Ok(new GetContactListResponse(Count: result.Count, result.Select(r => new GetContactResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList()));
     }
     [HttpGet]
-    public async Task<IActionResult> GetAsync([FromQuery] int page, int pageSize, CancellationToken ct)
+    public async Task<IActionResult> GetAsync([FromQuery] int? page, int? pageSize, CancellationToken ct)
     {
         var query = new SearchContractQuery(page, pageSize);
         var result = await searchContactHandler.ExecuteAsync(query);
+
+        return Ok(new GetContactListResponse(Count: result.Count, result.Select(r => new GetContactResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList()));
+    }
+    [HttpGet("search")]
+    public async Task<IActionResult> GetAsync([FromQuery] string q, string? name, string? email, string? tel, DateTimeOffset? joined, int? page, int? pageSize, CancellationToken ct)
+    {
+        var query = new SearchContactDetailQuery(q, name, email, tel, joined, page, pageSize);
+        var result = await searchContactHandler.ExecuteAsync(query, ct);
 
         return Ok(new GetContactListResponse(Count: result.Count, result.Select(r => new GetContactResponse(Name: r.Name, Email: r.Email, Tel: r.Tel)).ToList()));
     }

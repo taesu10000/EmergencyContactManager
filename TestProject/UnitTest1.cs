@@ -92,8 +92,8 @@ namespace TestProject
         public async Task Get_AllContacts_Returns200()
         {
             // Act
-            var page = 3;
-            var pageSize = 30;
+            int? page = null;
+            int? pageSize = null;
             var response = await _client.GetAsync($"/api/employee?page={page}&pageSize={pageSize}");
 
             // Assert
@@ -107,7 +107,28 @@ namespace TestProject
         public async Task Get_ByName_Returns200()
         {
             // Act
-            var response = await _client.GetAsync("/api/employee/김은지");
+            var name = "김은지";
+            var response = await _client.GetAsync($"/api/employee/{name}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var body = await response.Content.ReadAsStringAsync();
+            helper.WriteLine(body);
+            Assert.False(string.IsNullOrWhiteSpace(body));
+        }
+        [Fact]
+        public async Task Search_Query_Returns200()
+        {
+            // Act
+            var q = "김은";
+            var name = "";
+            var email = "";
+            var tel = "3359";
+            DateTimeOffset? joined = null;
+            int? page = 1;
+            int? pageSize = 30;
+            var response = await _client.GetAsync($"/api/employee/search?q={q}&tel={tel}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
