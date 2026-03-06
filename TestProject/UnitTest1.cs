@@ -1,4 +1,3 @@
-using EmergencyContactManager.Components;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using System.Net.Http.Headers;
@@ -143,6 +142,43 @@ namespace TestProject
             var response = await _client.DeleteAsync("/api/employee/all");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+     
+        }
+        [Fact]
+        public async Task Post_WithInvalidJson_Returns415()
+        {
+            var json = """
+                { "name":"조유진"
+                """;
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync("/api/employee", content);
+
+            Assert.Equal(HttpStatusCode.UnsupportedMediaType, response.StatusCode);
+        }
+        [Fact]
+        public async Task Post_WithInvalidCsv_Returns400()
+        {
+            var csv = """
+                name,email
+                조유진,a@test.com
+                """;
+
+            var content = new StringContent(csv, Encoding.UTF8, "text/plain");
+
+            var response = await _client.PostAsync("/api/employee", content);
+
+            Assert.Equal(HttpStatusCode.UnprocessableContent, response.StatusCode);
+        }
+        [Fact]
+        public async Task Post_WithEmptyBody_Returns400()
+        {
+            var content = new StringContent("", Encoding.UTF8, "application/json");
+
+            var response = await _client.PostAsync("/api/employee", content);
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
