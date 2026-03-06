@@ -1,23 +1,13 @@
-﻿using Application.Exceptions;
-using Application.Handlers.SearchContact;
-using Application.Interfaces.Repositories;
-using Application.Resolver;
-using Infrastructure.Services;
+﻿using Application.Interfaces.Repositories;
 
 namespace Application.Handlers.GetContact
 {
     public class GetContactHandler : IGetContactHandler
     {
-        private readonly IContactParserResolver contactParserResolver;
         private readonly IContactRepository contactRepository;
-        private readonly IApplicationTransaction applicationTransaction;
-        public GetContactHandler(IContactParserResolver contactParserResolver,
-                                    IContactRepository contactRepository,
-                                    IApplicationTransaction applicationTransaction)
+        public GetContactHandler(IContactRepository contactRepository)
         {
-            this.contactParserResolver = contactParserResolver;
             this.contactRepository = contactRepository;
-            this.applicationTransaction = applicationTransaction;
         }
         public async Task<List<GetContactResult>> ExecuteAsync(string name, CancellationToken ct = default)
         {

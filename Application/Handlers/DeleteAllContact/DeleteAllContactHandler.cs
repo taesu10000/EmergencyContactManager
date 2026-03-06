@@ -1,6 +1,5 @@
 ﻿using Application.Handlers.DeleteAllContact;
 using Application.Interfaces.Repositories;
-using Infrastructure.Services;
 
 namespace Application.Handlers.CreateContact
 {
